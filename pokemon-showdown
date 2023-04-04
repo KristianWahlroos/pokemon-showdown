@@ -67,6 +67,11 @@ if (!process.argv[2] || /^[0-9]+$/.test(process.argv[2])) {
 		console.log('  Generates a random team, and writes it to stdout in packed team format');
 		console.log('  (Format defaults to the latest Random Battles format)');
 		console.log('');
+		console.log('pokemon-showdown generate-team-alt [???[FORMAT-ID [RANDOM-SEED]]]');
+		console.log('');
+		console.log('  Generates a random team, and writes it to stdout in ??? format');
+		console.log('  (Format defaults to the latest Random Battles format)');
+		console.log('');
 		console.log('pokemon-showdown validate-team [FORMAT-ID]');
 		console.log('');
 		console.log('  Reads a team from stdin, and validates it');
@@ -107,6 +112,24 @@ if (!process.argv[2] || /^[0-9]+$/.test(process.argv[2])) {
 			var Teams = require('./dist/sim/teams.js').Teams;
 			var seed = process.argv[4] ? process.argv[4].split(',').map(Number) : undefined;
 			console.log(Teams.pack(Teams.generate(process.argv[3], {seed})));
+		}
+		break;
+	case 'generate-team-alt':
+		{
+			ensureBuilt();
+			var Teams = require('./dist/sim/teams.js').Teams;
+			console.log("{\"teams\":[");
+			for(i = 0;i<process.argv[3];i++) {
+				if (i!=0) {
+					console.log(",");
+				}
+				var seed = process.argv[5] ? process.argv[5].split(',').map(Number): undefined;
+				if (seed != undefined) {
+					seed[3] += i;
+				}
+				Teams.pack(Teams.generate(process.argv[4], {seed}));
+			}
+			console.log("]}");
 		}
 		break;
 	case 'validate-team':

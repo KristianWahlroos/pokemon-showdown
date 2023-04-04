@@ -819,6 +819,7 @@ export class RandomGen5Teams extends RandomGen6Teams {
 		const seed = this.prng.seed;
 		const ruleTable = this.dex.formats.getRuleTable(this.format);
 		const pokemon: RandomTeamsTypes.RandomSet[] = [];
+		const pokemon_alt: RandomTeamsTypes.AltRandomSet[] = [];
 
 		// For Monotype
 		const isMonotype = !!this.forceMonotype || ruleTable.has('sametypeclause');
@@ -904,7 +905,33 @@ export class RandomGen5Teams extends RandomGen6Teams {
 			}
 
 			// Okay, the set passes, add it to our team
+			const tr = Math.trunc;
+			// 
+			const atk = tr(tr(2 * species.baseStats['atk'] + (set.ivs['atk']?  set.ivs['atk'] : 0) + tr((set.evs['atk']?  set.evs['atk'] : 0) / 4)) * set.level / 100 + 5);
+			const def = tr(tr(2 * species.baseStats['def'] + (set.ivs['def']?  set.ivs['def'] : 0) + tr((set.evs['def']?  set.evs['def'] : 0) / 4)) * set.level / 100 + 5);
+			const spa = tr(tr(2 * species.baseStats['spa'] + (set.ivs['spa']?  set.ivs['spa'] : 0) + tr((set.evs['spa']?  set.evs['spa'] : 0) / 4)) * set.level / 100 + 5);
+			const spd = tr(tr(2 * species.baseStats['spd'] + (set.ivs['spd']?  set.ivs['spd'] : 0) + tr((set.evs['spd']?  set.evs['spd'] : 0) / 4)) * set.level / 100 + 5);
+			const spe = tr(tr(2 * species.baseStats['spe'] + (set.ivs['spe']?  set.ivs['spe'] : 0) + tr((set.evs['spe']?  set.evs['spe'] : 0) / 4)) * set.level / 100 + 5);
+			const hp = tr(tr(2 * species.baseStats['hp'] + (set.ivs['hp']?  set.ivs['hp'] : 0)+ tr((set.evs['hp']?  set.evs['hp'] : 0) / 4) + 100) * set.level / 100 + 10);
+			
+			const stats_table : StatsTable = {
+				hp: hp,
+				atk: atk,
+				def: def,
+				spa: spa,
+				spd: spd,
+				spe: spe,
+			}
+			const alt_set: RandomTeamsTypes.AltRandomSet = {
+				species: species.baseSpecies,
+				level: set.level,
+				moves: set.moves,
+				stats: stats_table,
+				types: species.types,
+			};
 			pokemon.push(set);
+			pokemon_alt.push(alt_set);
+
 
 			if (pokemon.length === this.maxTeamSize) {
 				// Set Zoroark's level to be the same as the last Pokemon
@@ -959,7 +986,7 @@ export class RandomGen5Teams extends RandomGen6Teams {
 		if (pokemon.length < this.maxTeamSize && pokemon.length < 12) {
 			throw new Error(`Could not build a random team for ${this.format} (seed=${seed})`);
 		}
-
+		console.log('{\"team\":' + JSON.stringify(pokemon_alt) + '}');
 		return pokemon;
 	}
 }

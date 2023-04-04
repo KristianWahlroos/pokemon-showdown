@@ -532,6 +532,13 @@ namespace RandomTeamsTypes {
 		teraType?: string;
 		role?: string;
 	}
+	export interface AltRandomSet {
+		species: string;
+		level: number;
+		moves: string[];
+		stats: StatsTable;
+		types: string[];
+	}
 	export interface RandomFactorySet {
 		name: string;
 		species: string;
